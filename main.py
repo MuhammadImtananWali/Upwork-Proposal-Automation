@@ -4,11 +4,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from helpers.job_extractor import JobExtractor
-from helpers.job_parser import JobParser
-from helpers.llm_manager import LLMManager
-from helpers.profile_manager import ProfileManager
-from helpers.proposal_generator import ProposalGenerator
+from component.job_extractor import JobExtractor
+from component.job_parser import JobParser
+from component.llm_manager import LLMManager
+from component.profile_manager import ProfileManager
+from component.proposal_generator import ProposalGenerator
 
 
 @click.group()
