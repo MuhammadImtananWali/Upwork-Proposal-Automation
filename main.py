@@ -18,11 +18,10 @@ def cli():
 
 
 @click.command()
-@click.option("--url", help="Upwork job URL")
 @click.option("--html-file", help="Path to HTML file")
 @click.option("--text", help="Job description text")
 @click.option("--output", default="proposal.json", help="Output file")
-def generate(url, html_file, text, output):
+def generate(html_file, text, output):
     """Generate a proposal from job posting"""
 
     # Initialize components
@@ -33,9 +32,7 @@ def generate(url, html_file, text, output):
     generator = ProposalGenerator(llm_manager, profile_manager)
 
     # Extract job details
-    if url:
-        content_chunks = extractor.extract_from_url(url)
-    elif html_file:
+    if html_file:
         with open(html_file, "r") as f:
             content_chunks = extractor.extract_from_html(f.read())
     elif text:

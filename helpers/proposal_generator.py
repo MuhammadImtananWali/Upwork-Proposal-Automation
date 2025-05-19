@@ -1,19 +1,25 @@
+from datetime import datetime
+from .profile_matcher import ProfileMatcher
+
+
 class ProposalPrompts:
     @staticmethod
     def create_proposal_prompt(job_details, company_profile, matching_data):
         # Format relevant projects for the prompt
         relevant_projects_text = ""
-        if matching_data.get('relevant_projects'):
+        if matching_data.get("relevant_projects"):
             relevant_projects_text = "\n\nRELEVANT PROJECTS TO MENTION:"
-            for i, project in enumerate(matching_data.get('relevant_projects', [])[:3], 1):
+            for i, project in enumerate(
+                matching_data.get("relevant_projects", [])[:3], 1
+            ):
                 relevant_projects_text += f"\n{i}. {project.get('title')}: {project.get('description', 'Project details available upon request')}"
-        
+
         # Format portfolio projects as backup
         portfolio_backup = ""
         if company_profile.portfolio_projects:
             portfolio_backup = "\n\nADDITIONAL PORTFOLIO PROJECTS (use if relevant projects above aren't sufficient):"
             for project in company_profile.portfolio_projects[:5]:
-                if project not in matching_data.get('relevant_projects', []):
+                if project not in matching_data.get("relevant_projects", []):
                     portfolio_backup += f"\n- {project.get('title')}: {project.get('description', 'Successful project completion')}"
 
         return f"""
@@ -77,49 +83,42 @@ class ProposalPrompts:
         Generate 3 different subject line options:
         """
 
-from langchain.prompts import PromptTemplate
-from datetime import datetime
-
-from profile_matcher import ProfileMatcher
 
 class ProposalGenerator:
     def __init__(self, llm_manager, profile_manager):
         self.llm_manager = llm_manager
         self.profile_manager = profile_manager
         self.matcher = ProfileMatcher(profile_manager.profile)
-    
+
     def generate_proposal(self, job_details, template_type="standard"):
         # Calculate matching data
         matching_data = {
-            'relevance_score': self.matcher.calculate_relevance_score(job_details),
-            'matching_skills': self.matcher.get_matching_skills(job_details),
-            'relevant_projects': self.matcher.get_relevant_projects(job_details)
+            "relevance_score": self.matcher.calculate_relevance_score(job_details),
+            "matching_skills": self.matcher.get_matching_skills(job_details),
+            "relevant_projects": self.matcher.get_relevant_projects(job_details),
         }
-        
+
         # Generate proposal content
         proposal_prompt = ProposalPrompts.create_proposal_prompt(
-            job_details, 
-            self.profile_manager.profile, 
-            matching_data
+            job_details, self.profile_manager.profile, matching_data
         )
-        
+
         proposal_content = self.llm_manager.generate_text(proposal_prompt)
-        
+
         # Generate subject lines
         subject_prompt = ProposalPrompts.create_subject_line_prompt(
-            job_details, 
-            self.profile_manager.profile
+            job_details, self.profile_manager.profile
         )
-        
+
         subject_lines = self.llm_manager.generate_text(subject_prompt)
-        
+
         return {
-            'proposal': proposal_content,
-            'subject_lines': subject_lines,
-            'matching_data': matching_data,
-            'generated_at': datetime.now().isoformat()
+            "proposal": proposal_content,
+            "subject_lines": subject_lines,
+            "matching_data": matching_data,
+            "generated_at": datetime.now().isoformat(),
         }
-    
+
     def refine_proposal(self, original_proposal, feedback):
         refine_prompt = f"""
         Improve the following proposal based on this feedback:
@@ -132,5 +131,5 @@ class ProposalGenerator:
         
         Generate an improved version that addresses the feedback while maintaining professionalism:
         """
-        
+
         return self.llm_manager.generate_text(refine_prompt)
