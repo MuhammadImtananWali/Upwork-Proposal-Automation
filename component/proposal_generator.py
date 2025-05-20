@@ -33,7 +33,7 @@ class ProposalPrompts:
         - Timeline: {job_details.timeline or 'Not specified'}
         - Client: {job_details.company_name or 'Potential Client'}
 
-        COMPANY PROFILE:
+        PERSON PROFILE:
         - Name: {company_profile.company_name}
         - Description: {company_profile.description}
         - Experience: {company_profile.experience_years} years in the industry
@@ -48,20 +48,17 @@ class ProposalPrompts:
         {portfolio_backup}
 
         CRITICAL REQUIREMENTS:
-        1. Keep the proposal between 200-350 words
+        1. Keep the proposal between 150-250 words
         2. Start with a personalized greeting addressing the client by name
-        3. MUST mention at least 2-3 specific projects from the lists above with brief descriptions
+        3. MUST mention at least some specific relevant projects from the lists above with brief descriptions
         4. Highlight matching skills explicitly (TypeScript, React, Python, AI Chatbot, LangChain, etc.)
-        5. Reference the company description to show understanding of cross-disciplinary collaboration
+        5. Reference the person description to show understanding of cross-disciplinary collaboration
         6. Address the specific needs mentioned in the job description (FastAPI, Langchain/Langgraph, React+TypeScript)
         7. Include a clear call-to-action for next steps
         8. Use a professional but approachable tone
         9. NO placeholder text like "[mention if possible]" - always include specific examples
         10. Show enthusiasm for long-term collaboration as mentioned in the job post
-
-        EXAMPLE PROJECT INTEGRATION:
-        Instead of: "We have experience with similar projects"
-        Write: "For example, we developed Ikigai, an AI platform for enterprises that uses generative AI for data forecasting, and created MineARC, a safety compliance platform with advanced inspection features."
+        11. Write it as possible as a human, avoiding AI-generated text
 
         Generate a compelling, specific proposal that demonstrates our expertise with concrete examples:
         """
@@ -71,7 +68,7 @@ class ProposalPrompts:
         return f"""
         Create a compelling subject line for an Upwork proposal. The job is about: "{job_details.title}"
         
-        Our company specializes in: {', '.join(company_profile.core_services[:3])}
+        I'm specializes in: {', '.join(company_profile.core_services[:3])}
         
         Requirements:
         1. Keep it under 60 characters
